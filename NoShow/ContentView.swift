@@ -1,24 +1,11 @@
-//
-//  ContentView.swift
-//  NoShow
-//
-//  Created by Natalia Ivanov on 3/20/26.
-//
+@main
+struct NoShowApp: App {
+    @StateObject private var authVM = AuthViewModel()
 
-import SwiftUI
-
-struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+                .environmentObject(authVM)
         }
-        .padding()
     }
-}
-
-#Preview {
-    ContentView()
 }

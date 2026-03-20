@@ -1,17 +1,18 @@
-//
-//  NoShowApp.swift
-//  NoShow
-//
-//  Created by Natalia Ivanov on 3/20/26.
-//
-
 import SwiftUI
 
-@main
-struct NoShowApp: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
+#Preview {
+    struct ContentView: View {
+        @EnvironmentObject var authVM: AuthViewModel
+
+        var body: some View {
+            Group {
+                if authVM.isAuthenticated {
+                    MainTabView()
+                } else {
+                    LandingView()
+                }
+            }
+            .animation(.easeInOut, value: authVM.isAuthenticated)
         }
     }
 }
