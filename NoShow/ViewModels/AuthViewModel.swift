@@ -11,6 +11,9 @@ class AuthViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var awaitingOTP = false
 
+    // ⚠️ SET TO false BEFORE SHIPPING — this bypasses real auth
+    private let devMode = true
+
     private let authService = AuthService()
     private var pendingPhone: String = ""
 
@@ -19,6 +22,7 @@ class AuthViewModel: ObservableObject {
     }
 
     func checkSession() async {
+        if devMode { return }
         if let session = await authService.getCurrentSession() {
             do {
                 currentUser = try await authService.getProfile(userId: session.user.id)
@@ -33,6 +37,13 @@ class AuthViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         pendingPhone = phone
+
+        if devMode {
+            awaitingOTP = true
+            isLoading = false
+            return
+        }
+
         do {
             try await authService.sendOTP(phone: phone)
             awaitingOTP = true
@@ -45,13 +56,19 @@ class AuthViewModel: ObservableObject {
     func verifyOTP(code: String) async {
         isLoading = true
         errorMessage = nil
+
+        if devMode {
+            // Skip real verification — accept any code
+            isAuthenticated = true
+            isLoading = false
+            return
+        }
+
         do {
             let session = try await authService.verifyOTP(phone: pendingPhone, code: code)
-            // Try to load existing profile, or mark as new user
             do {
                 currentUser = try await authService.getProfile(userId: session.user.id)
             } catch {
-                // New user — profile will be created in signup flow
                 currentUser = nil
             }
             isAuthenticated = true
@@ -61,7 +78,22 @@ class AuthViewModel: ObservableObject {
         isLoading = false
     }
 
-    func createProfile(firstName: String) async {
+    func createProfile(firstName: String, lastName: String, age: Int, gender: String, neighborhood: String) async {
+        if devMode {
+            currentUser = AppUser(
+                id: UUID(),
+                phoneNumber: pendingPhone.isEmpty ? "+16175550000" : pendingPhone,
+                firstName: firstName,
+                lastName: lastName,
+                age: age,
+                gender: gender,
+                neighborhood: neighborhood,
+                createdAt: Date(),
+                notificationPreferences: nil
+            )
+            return
+        }
+
         guard let session = await authService.getCurrentSession() else { return }
         do {
             try await authService.createProfile(
@@ -76,6 +108,12 @@ class AuthViewModel: ObservableObject {
     }
 
     func signOut() async {
+        if devMode {
+            isAuthenticated = false
+            currentUser = nil
+            awaitingOTP = false
+            return
+        }
         try? await authService.signOut()
         isAuthenticated = false
         currentUser = nil

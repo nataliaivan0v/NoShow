@@ -5,12 +5,12 @@ struct ContentView: View {
 
     var body: some View {
         Group {
-            if authVM.isAuthenticated {
+            if authVM.isAuthenticated && authVM.currentUser != nil {
                 MainTabView()
             } else {
                 LandingView()
             }
         }
-        .animation(.easeInOut, value: authVM.isAuthenticated)
+        .animation(.easeInOut, value: authVM.currentUser != nil)
     }
 }

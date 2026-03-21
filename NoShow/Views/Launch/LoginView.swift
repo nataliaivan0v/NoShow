@@ -3,6 +3,7 @@ import SwiftUI
 struct LoginView: View {
     @EnvironmentObject var authVM: AuthViewModel
     @State private var phone = ""
+    @State private var countryCode = "+1"
     @State private var otpCode = ""
 
     var body: some View {
@@ -17,7 +18,7 @@ struct LoginView: View {
                 if !authVM.awaitingOTP {
                     // Phone input
                     VStack(spacing: 16) {
-                        TextField("Phone number", text: $phone)
+                        TextField("+1 (617) 555-0000", text: $phone)
                             .keyboardType(.phonePad)
                             .padding()
                             .background(Theme.white)
@@ -31,11 +32,12 @@ struct LoginView: View {
                 } else {
                     // OTP input
                     VStack(spacing: 16) {
-                        TextField("Enter 6-digit code", text: $otpCode)
-                            .keyboardType(.numberPad)
-                            .padding()
-                            .background(Theme.white)
-                            .cornerRadius(12)
+                        Text("Enter the 6-digit code we sent you")
+                            .font(Theme.body())
+                            .foregroundColor(Theme.white.opacity(0.85))
+                            .multilineTextAlignment(.center)
+
+                        OTPFieldView(code: $otpCode)
 
                         PrimaryButton(title: authVM.isLoading ? "Verifying..." : "Verify") {
                             Task { await authVM.verifyOTP(code: otpCode) }

@@ -4,6 +4,10 @@ struct AppUser: Codable, Identifiable {
     let id: UUID
     var phoneNumber: String
     var firstName: String
+    var lastName: String
+    var age: Int
+    var gender: String
+    var neighborhood: String
     var createdAt: Date
     var notificationPreferences: NotificationPreferences?
 
@@ -11,6 +15,10 @@ struct AppUser: Codable, Identifiable {
         case id
         case phoneNumber = "phone_number"
         case firstName = "first_name"
+        case lastName = "last_name"
+        case age
+        case gender
+        case neighborhood
         case createdAt = "created_at"
         case notificationPreferences = "notification_preferences"
     }

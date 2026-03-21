@@ -3,6 +3,7 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject var authVM: AuthViewModel
     @Binding var selectedTab: Tab
+    @Binding var showHome: Bool
 
     var body: some View {
         ZStack {
@@ -23,6 +24,13 @@ struct HomeView: View {
                         .font(Theme.heroTitle())
                         .italic()
                         .foregroundColor(Theme.white)
+
+                    if let neighborhood = authVM.currentUser?.neighborhood, !neighborhood.isEmpty {
+                        Text("Browsing classes near \(neighborhood)")
+                            .font(Theme.caption())
+                            .foregroundColor(Theme.white.opacity(0.7))
+                            .padding(.top, 8)
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 32)
@@ -37,14 +45,17 @@ struct HomeView: View {
 
                     PrimaryButton(title: "I WANT TO LIST A CLASS") {
                         selectedTab = .create
+                        showHome = false
                     }
 
                     PrimaryButton(title: "I WANT TO TAKE A CLASS") {
                         selectedTab = .browse
+                        showHome = false
                     }
 
                     PrimaryButton(title: "TAKE ME TO MY DASHBOARD") {
                         selectedTab = .dashboard
+                        showHome = false
                     }
                 }
                 .padding(.horizontal, 32)

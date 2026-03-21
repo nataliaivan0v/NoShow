@@ -7,10 +7,7 @@ struct MainTabView: View {
     var body: some View {
         ZStack {
             if showHome {
-                HomeView(selectedTab: $selectedTab)
-                    .onChange(of: selectedTab) { _, _ in
-                        showHome = false
-                    }
+                HomeView(selectedTab: $selectedTab, showHome: $showHome)
             } else {
                 VStack(spacing: 0) {
                     // Content
