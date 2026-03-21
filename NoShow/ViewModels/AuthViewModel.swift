@@ -1,5 +1,7 @@
 import Foundation
 import SwiftUI
+internal import Combine
+internal import Auth
 
 @MainActor
 class AuthViewModel: ObservableObject {

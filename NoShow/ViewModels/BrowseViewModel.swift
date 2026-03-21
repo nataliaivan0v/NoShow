@@ -1,4 +1,5 @@
 import Foundation
+internal import Combine
 
 @MainActor
 class BrowseViewModel: ObservableObject {

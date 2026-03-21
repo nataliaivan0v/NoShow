@@ -1,4 +1,5 @@
 import SwiftUI
+internal import Combine
 
 struct CountdownTimer: View {
     let targetDate: Date

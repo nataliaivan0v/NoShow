@@ -1,4 +1,4 @@
-mport SwiftUI
+import SwiftUI
 
 struct CreateListingView: View {
     @EnvironmentObject var authVM: AuthViewModel

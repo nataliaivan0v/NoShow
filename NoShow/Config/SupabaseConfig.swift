@@ -2,12 +2,8 @@ import Foundation
 import Supabase
 
 struct SupabaseConfig {
-    // TODO: setup supabase and update these values
-    static let url = URL(string: "https://YOUR_PROJECT.supabase.co")!
-    static let anonKey = "YOUR_ANON_KEY"
-
     static let client = SupabaseClient(
-        supabaseURL: url,
-        supabaseKey: anonKey
+        supabaseURL: URL(string: "https://dsjnjpolizapysxlcvuy.supabase.co")!,
+        supabaseKey: "sb_publishable_h98vDVQ0v0_8LVFnCJOweQ_1kJxF456"
     )
 }

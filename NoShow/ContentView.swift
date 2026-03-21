@@ -1,3 +1,5 @@
+import SwiftUI
+
 @main
 struct NoShowApp: App {
     @StateObject private var authVM = AuthViewModel()
