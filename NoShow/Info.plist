@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>BerkshireSwash-Regular.ttf</string>
+		<string>Afacad-SemiBoldItalic.ttf</string>
+		<string>Afacad-SemiBold.ttf</string>
+		<string>Afacad-Regular.ttf</string>
+		<string>Afacad-MediumItalic.ttf</string>
+		<string>Afacad-Medium.ttf</string>
+		<string>Afacad-Italic.ttf</string>
+		<string>Afacad-BoldItalic.ttf</string>
+		<string>Afacad-Bold.ttf</string>
+	</array>
+</dict>
+</plist>

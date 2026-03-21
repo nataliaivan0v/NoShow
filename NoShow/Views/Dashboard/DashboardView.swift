@@ -16,14 +16,14 @@ struct DashboardView: View {
                         .foregroundColor(Theme.textPrimary)
                     Spacer()
                     Text("No Show")
-                        .font(.system(size: 18, weight: .bold, design: .serif))
+                        .font(Theme.logoCorner())
                         .italic()
-                        .foregroundColor(Theme.orange)
+                        .foregroundColor(Theme.white)
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 16)
                 .padding(.bottom, 12)
-                .background(Theme.white)
+                .background(Theme.orange)
 
                 // Scrollable content
                 ScrollView {

@@ -16,21 +16,14 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Hi \(authVM.currentUser?.firstName ?? "there"),")
                         .font(Theme.screenTitle())
-                        .foregroundColor(Theme.white)
+                        .foregroundColor(Theme.black)
                     Text("Welcome to")
                         .font(Theme.screenTitle())
-                        .foregroundColor(Theme.white)
+                        .foregroundColor(Theme.black)
                     Text("No Show")
                         .font(Theme.heroTitle())
                         .italic()
                         .foregroundColor(Theme.white)
-
-                    if let neighborhood = authVM.currentUser?.neighborhood, !neighborhood.isEmpty {
-                        Text("Browsing classes near \(neighborhood)")
-                            .font(Theme.caption())
-                            .foregroundColor(Theme.white.opacity(0.7))
-                            .padding(.top, 8)
-                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 32)
