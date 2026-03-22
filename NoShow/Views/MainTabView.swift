@@ -19,6 +19,8 @@ struct MainTabView: View {
                             CreateListingView()
                         case .dashboard:
                             DashboardView()
+                        case .profile:
+                            ProfileView()
                         }
                     }
                     .frame(maxHeight: .infinity)

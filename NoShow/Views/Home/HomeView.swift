@@ -16,10 +16,10 @@ struct HomeView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Hi \(authVM.currentUser?.firstName ?? "there"),")
                         .font(Theme.screenTitle())
-                        .foregroundColor(Theme.black)
+                        .foregroundColor(Theme.white)
                     Text("Welcome to")
                         .font(Theme.screenTitle())
-                        .foregroundColor(Theme.black)
+                        .foregroundColor(Theme.white)
                     Text("No Show")
                         .font(Theme.heroTitle())
                         .italic()

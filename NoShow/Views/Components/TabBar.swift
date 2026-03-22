@@ -1,7 +1,7 @@
 import SwiftUI
 
 enum Tab {
-    case browse, create, dashboard
+    case browse, create, dashboard, profile
 }
 
 struct TabBar: View {
@@ -15,6 +15,8 @@ struct TabBar: View {
             tabButton(icon: "plus", tab: .create)
             Spacer()
             tabButton(icon: "house.fill", tab: .dashboard)
+            Spacer()
+            tabButton(icon: "person.fill", tab: .profile)
             Spacer()
         }
         .padding(.vertical, 12)

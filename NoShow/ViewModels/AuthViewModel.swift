@@ -78,18 +78,23 @@ class AuthViewModel: ObservableObject {
         isLoading = false
     }
 
-    func createProfile(firstName: String, lastName: String, age: Int, gender: String, neighborhood: String) async {
+    func createProfile(firstName: String, lastName: String, birthDate: Date, email: String, gender: String, preferredClassTypes: [ClassType] = []) async {
         if devMode {
             currentUser = AppUser(
                 id: UUID(),
                 phoneNumber: pendingPhone.isEmpty ? "+16175550000" : pendingPhone,
                 firstName: firstName,
                 lastName: lastName,
-                age: age,
+                birthDate: birthDate,
+                email: email,
                 gender: gender,
-                neighborhood: neighborhood,
                 createdAt: Date(),
-                notificationPreferences: nil
+                notificationPreferences: NotificationPreferences(
+                    classTypes: preferredClassTypes.map { $0.rawValue },
+                    studios: [],
+                    radiusMiles: 5.0,
+                    preferredTimes: []
+                )
             )
             return
         }

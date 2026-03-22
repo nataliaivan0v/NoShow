@@ -7,11 +7,13 @@ struct SignUpView: View {
     @State private var countryCode = "+1"
     @State private var firstName = ""
     @State private var lastName = ""
-    @State private var age = ""
+    @State private var birthDate = Calendar.current.date(byAdding: .year, value: -18, to: Date()) ?? Date()
+    @State private var email = ""
     @State private var gender = "Prefer not to say"
-    @State private var neighborhood = ""
+    @State private var preferredClassTypes: Set<ClassType> = []
     @State private var acceptedTerms = false
     @State private var step: SignUpStep = .phone
+    @State private var showUnderageError = false
 
     let genderOptions = ["Female", "Male", "Non-binary", "Prefer not to say"]
 
@@ -24,9 +26,33 @@ struct SignUpView: View {
             Theme.orange.ignoresSafeArea()
 
             VStack(spacing: 24) {
+                // Back button for steps after phone
+                if step != .phone {
+                    HStack {
+                        Button {
+                            switch step {
+                            case .otp: step = .phone
+                            case .name: step = .otp
+                            case .details: step = .name
+                            case .terms: step = .details
+                            default: break
+                            }
+                        } label: {
+                            HStack(spacing: 4) {
+                                Image(systemName: "chevron.left")
+                                Text("Back")
+                            }
+                            .font(Theme.body())
+                            .foregroundColor(Theme.white)
+                        }
+                        Spacer()
+                    }
+                }
+
                 Text(stepTitle)
                     .font(Theme.screenTitle())
                     .foregroundColor(Theme.white)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                 switch step {
                 case .phone:
@@ -105,34 +131,75 @@ struct SignUpView: View {
                             .background(Theme.white)
                             .cornerRadius(12)
 
-                        PrimaryButton(title: "Continue") {
-                            step = .details
-                        }
-                        .disabled(firstName.isEmpty || lastName.isEmpty)
-                    }
-
-                case .details:
-                    VStack(spacing: 16) {
-                        TextField("Age", text: $age)
-                            .keyboardType(.numberPad)
+                        TextField("Email address", text: $email)
+                            .keyboardType(.emailAddress)
+                            .autocapitalization(.none)
                             .padding()
                             .background(Theme.white)
                             .cornerRadius(12)
 
+                        PrimaryButton(title: "Continue") {
+                            step = .details
+                        }
+                        .disabled(firstName.isEmpty || lastName.isEmpty || email.isEmpty)
+                    }
+
+                case .details:
+                    VStack(alignment: .leading, spacing: 20) {
+                        // Birthdate
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Date of birth")
+                                .font(Theme.caption())
+                                .foregroundColor(Theme.white.opacity(0.8))
+
+                            HStack {
+                                DatePicker(
+                                    "",
+                                    selection: $birthDate,
+                                    in: ...Date(),
+                                    displayedComponents: .date
+                                )
+                                .datePickerStyle(.compact)
+                                .labelsHidden()
+                                .tint(Theme.orange)
+                                .onChange(of: birthDate) { _, _ in
+                                    showUnderageError = !isAtLeast18
+                                }
+
+                                Spacer()
+                            }
+                            .padding()
+                            .background(Theme.white)
+                            .cornerRadius(12)
+
+                            if showUnderageError {
+                                Text("You must be at least 18 years old to use No Show.")
+                                    .font(Theme.caption())
+                                    .foregroundColor(Theme.white)
+                                    .padding(10)
+                                    .background(Color.red.opacity(0.6))
+                                    .cornerRadius(8)
+                            } else {
+                                Text("You must be 18 or older to use this app.")
+                                    .font(Theme.caption())
+                                    .foregroundColor(Theme.white.opacity(0.6))
+                            }
+                        }
+
                         // Gender picker
-                        VStack(alignment: .leading, spacing: 6) {
+                        VStack(alignment: .leading, spacing: 8) {
                             Text("Gender")
                                 .font(Theme.caption())
                                 .foregroundColor(Theme.white.opacity(0.8))
 
-                            HStack(spacing: 8) {
+                            FlowLayout(spacing: 8) {
                                 ForEach(genderOptions, id: \.self) { option in
                                     Button {
                                         gender = option
                                     } label: {
                                         Text(option)
                                             .font(Theme.caption())
-                                            .padding(.horizontal, 12)
+                                            .padding(.horizontal, 14)
                                             .padding(.vertical, 10)
                                             .background(gender == option ? Theme.white : Theme.white.opacity(0.25))
                                             .foregroundColor(gender == option ? Theme.orange : Theme.white)
@@ -142,15 +209,41 @@ struct SignUpView: View {
                             }
                         }
 
-                        TextField("Neighborhood (e.g. Back Bay, Williamsburg)", text: $neighborhood)
-                            .padding()
-                            .background(Theme.white)
-                            .cornerRadius(12)
+                        // Preferred class types
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Favorite class types (pick up to 3)")
+                                .font(Theme.caption())
+                                .foregroundColor(Theme.white.opacity(0.8))
+
+                            FlowLayout(spacing: 8) {
+                                ForEach(ClassType.allCases) { type in
+                                    Button {
+                                        if preferredClassTypes.contains(type) {
+                                            preferredClassTypes.remove(type)
+                                        } else if preferredClassTypes.count < 3 {
+                                            preferredClassTypes.insert(type)
+                                        }
+                                    } label: {
+                                        Text(type.rawValue)
+                                            .font(Theme.caption())
+                                            .padding(.horizontal, 14)
+                                            .padding(.vertical, 10)
+                                            .background(preferredClassTypes.contains(type) ? Theme.white : Theme.white.opacity(0.25))
+                                            .foregroundColor(preferredClassTypes.contains(type) ? Theme.orange : Theme.white)
+                                            .cornerRadius(20)
+                                    }
+                                }
+                            }
+                        }
 
                         PrimaryButton(title: "Continue") {
-                            step = .terms
+                            if isAtLeast18 {
+                                step = .terms
+                            } else {
+                                showUnderageError = true
+                            }
                         }
-                        .disabled(age.isEmpty || neighborhood.isEmpty)
+                        .disabled(!isAtLeast18)
                     }
 
                 case .terms:
@@ -174,9 +267,10 @@ struct SignUpView: View {
                                 await authVM.createProfile(
                                     firstName: firstName,
                                     lastName: lastName,
-                                    age: Int(age) ?? 0,
+                                    birthDate: birthDate,
+                                    email: email,
                                     gender: gender,
-                                    neighborhood: neighborhood
+                                    preferredClassTypes: Array(preferredClassTypes)
                                 )
                             }
                         }
@@ -193,9 +287,9 @@ struct SignUpView: View {
                 Spacer()
             }
             .padding(.horizontal, 32)
-            .padding(.top, 60)
+            .padding(.top, 20)
         }
-        .navigationBarBackButtonHidden(false)
+        .navigationBarBackButtonHidden(true)
     }
 
     var stepTitle: String {
@@ -219,5 +313,10 @@ struct SignUpView: View {
             result.append(c)
         }
         return result
+    }
+
+    var isAtLeast18: Bool {
+        let ageComponents = Calendar.current.dateComponents([.year], from: birthDate, to: Date())
+        return (ageComponents.year ?? 0) >= 18
     }
 }
